@@ -7,7 +7,7 @@ const app = express();
 
 // Configuração do CORS somente para https://chatgpt.com/
 const corsOptions = {
-  origin: ["http://127.0.0.1:5500","http://localhost:3000"],
+  origin: ["http://127.0.0.1:5500","http://localhost:3000","https://chatgpt.com"],
   methods: "GET,POST",
   optionsSuccessStatus: 200
 };
