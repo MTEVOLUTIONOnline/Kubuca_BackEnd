@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload de Arquivos</title>
+</head>
+<body>
+  <h1>Upload de Imagens e Vídeos</h1>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <label for="file">Selecione uma imagem ou vídeo:</label>
+    <input type="file" id="file" name="file" accept="image/*,video/*" required>
+    <button type="submit">Fazer Upload</button>
+  </form>
+
+  <p id="status"></p>
+  <img id="preview" style="display:none; max-width: 300px; margin-top: 20px;" alt="Pré-visualização">
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    const statusText = document.getElementById('status');
+    const preview = document.getElementById('preview');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault(); // Impede o envio padrão do formulário
+
+      const fileInput = document.getElementById('file');
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+
+      try {
+        statusText.textContent = "Fazendo upload...";
+        const response = await fetch('http://localhost:3000/upload', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            "x-api-key": "minha-chave-secreta"
+          }
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          statusText.textContent = "Upload feito com sucesso!";
+
+          // Mostrar pré-visualização se for uma imagem
+          if (fileInput.files[0].type.startsWith('image/')) {
+            preview.src = result.fileUrl;
+            preview.style.display = 'block';
+          } else {
+            preview.style.display = 'none';
+          }
+
+        } else {
+          statusText.textContent = "Falha no upload!";
+        }
+      } catch (error) {
+        statusText.textContent = "Erro ao fazer upload!";
+        console.error("Erro:", error);
+      }
+    });
+  </script>
+</body>
+</html>
